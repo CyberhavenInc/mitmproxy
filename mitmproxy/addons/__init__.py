@@ -29,6 +29,7 @@ from mitmproxy.addons import strip_ech
 from mitmproxy.addons import tlsconfig
 from mitmproxy.addons import update_alt_svc
 from mitmproxy.addons import upstream_auth
+from mitmproxy.addons.cyberhaven import cyberhaven
 
 
 def default_addons():
@@ -64,4 +65,5 @@ def default_addons():
         tlsconfig.TlsConfig(),
         upstream_auth.UpstreamAuth(),
         update_alt_svc.UpdateAltSvc(),
+        cyberhaven.MainCyberhaven(),
     ]
