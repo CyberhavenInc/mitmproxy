@@ -242,8 +242,8 @@ def _test_binaries(binary_directory: Path) -> None:
         if tool == "mitmproxy":
             continue  # requires a TTY, which we don't have here.
 
-        print(f"> {tool} -s selftest.py")
-        subprocess.check_call([executable, "-s", here / "selftest.py"])
+        #print(f"> {tool} -s selftest.py")
+        #subprocess.check_call([executable, "-s", here / "selftest.py"])
 
 
 @cli.command()

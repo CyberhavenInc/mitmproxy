@@ -1,5 +1,12 @@
 import argparse
 
+def restricted_options(parser, opts):
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="show version number and exit",
+        dest="version",
+    )
 
 def common_options(parser, opts):
     parser.add_argument(
@@ -106,15 +113,11 @@ def common_options(parser, opts):
 
 def mitmproxy(opts):
     parser = argparse.ArgumentParser(usage="%(prog)s [options]")
-    common_options(parser, opts)
+    # Don't allow 3rd parties to run mitmproxy with custom options.
+    # Mitmproxy is intended for Cyberhaven use only.
+    # Mitmweb and Mitmdump are used as internal tools and not deployed to customers. 
+    restricted_options(parser, opts)
 
-    opts.make_parser(parser, "console_layout")
-    opts.make_parser(parser, "console_layout_headers")
-    group = parser.add_argument_group(
-        "Filters", "See help in mitmproxy for filter expression syntax."
-    )
-    opts.make_parser(group, "intercept", metavar="FILTER")
-    opts.make_parser(group, "view_filter", metavar="FILTER")
     return parser
 
 

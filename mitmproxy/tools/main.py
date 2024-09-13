@@ -24,14 +24,14 @@ def process_options(parser, opts, args):
     if args.version:
         print(debug.dump_system_info())
         sys.exit(0)
-    if args.quiet or args.options or args.commands:
-        # also reduce log verbosity if --options or --commands is passed,
-        # we don't want log messages from regular startup then.
-        args.termlog_verbosity = "error"
-        args.flow_detail = 0
-    if args.verbose:
-        args.termlog_verbosity = "debug"
-        args.flow_detail = 2
+    #if args.quiet or args.options or args.commands:
+    #    # also reduce log verbosity if --options or --commands is passed,
+    #    # we don't want log messages from regular startup then.
+    #    args.termlog_verbosity = "error"
+    #    args.flow_detail = 0
+    #if args.verbose:
+    #    args.termlog_verbosity = "debug"
+    #    args.flow_detail = 2
 
     adict = {
         key: val for key, val in vars(args).items() if key in opts and val is not None
@@ -81,7 +81,7 @@ def run(
             sys.exit(1)
 
         try:
-            opts.set(*args.setoptions, defer=True)
+            #opts.set(*args.setoptions, defer=True)
             optmanager.load_paths(
                 opts,
                 os.path.join(opts.confdir, "config.yaml"),
@@ -89,18 +89,18 @@ def run(
             )
             process_options(parser, opts, args)
 
-            if args.options:
-                optmanager.dump_defaults(opts, sys.stdout)
-                sys.exit(0)
-            if args.commands:
-                master.commands.dump()
-                sys.exit(0)
-            if extra:
-                if args.filter_args:
-                    logging.info(
-                        f"Only processing flows that match \"{' & '.join(args.filter_args)}\""
-                    )
-                opts.update(**extra(args))
+            #if args.options:
+            #    optmanager.dump_defaults(opts, sys.stdout)
+            #    sys.exit(0)
+            #if args.commands:
+            #    master.commands.dump()
+            #    sys.exit(0)
+            #if extra:
+            #    if args.filter_args:
+            #        logging.info(
+            #            f"Only processing flows that match \"{' & '.join(args.filter_args)}\""
+            #        )
+            #    opts.update(**extra(args))
 
         except exceptions.OptionsError as e:
             print(f"{sys.argv[0]}: {e}", file=sys.stderr)
