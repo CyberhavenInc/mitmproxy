@@ -106,7 +106,7 @@ class Options(optmanager.OptManager):
         self.add_option(
             "mode",
             Sequence[str],
-            ["local"],
+            ["local:webview2"],
             """
             The proxy server type(s) to spawn. Can be passed multiple times.
 
