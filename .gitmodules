@@ -1,0 +1,4 @@
+[submodule "mitmproxy_rs"]
+	path = mitmproxy_rs
+	url = https://github.com/CyberhavenInc/mitmproxy_rs.git
+	branch = cyberhaven
