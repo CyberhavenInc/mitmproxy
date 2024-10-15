@@ -1,0 +1,82 @@
+name: Build
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-rs:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+          fetch-depth: 0
+      - run: rustup toolchain install stable --profile minimal
+      - run: rustup default stable
+      - run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84  # v2.7.3
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .github/python-version.txt
+      - uses: install-pinned/maturin@6f1db1ad43a0c7eac558f10b81c967da256f1e19
+      - run: maturin build --release --target universal2-apple-darwin
+        working-directory: ./mitmproxy_rs/mitmproxy-rs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mitmproxy-rs
+          path: mitmproxy_rs/target/wheels
+          retention-days: 1
+
+  build:
+    needs:
+      - build-rs
+    strategy:
+      matrix:
+        include:
+          - image: macos-14
+            platform: macos-arm64
+          - image: macos-13
+            platform: macos-x86_64
+    runs-on: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .github/python-version.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: mitmproxy-rs
+          path: mitmproxy-rs-wheel
+      - run : pip install mitmproxy-rs-wheel/*.whl
+      - run: pip install .[dev]  # pyinstaller 5.9 does not like pyproject.toml + editable installs.
+      - run: |
+          python -u release/build.py standalone-binaries
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries.${{ matrix.platform }}
+          path: release/build/pyinstaller/out/mitmproxy
+          retention-days: 1
+
+  merge:
+    runs-on: macos-14
+    needs:
+      - build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: binaries.macos-x86_64
+          path: x86_64
+      - uses: actions/download-artifact@v4
+        with:
+          name: binaries.macos-arm64
+          path: arm64
+      - run: lipo -create arm64/mitmproxy x86_64/mitmproxy -o mitmproxy
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries.universal2
+          path: mitmproxy
