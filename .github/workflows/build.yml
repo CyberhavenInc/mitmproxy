@@ -75,8 +75,9 @@ jobs:
         with:
           name: binaries.macos-arm64
           path: arm64
-      - run: lipo -create arm64/mitmproxy x86_64/mitmproxy -o mitmproxy
+      - run: lipo -create arm64/mitmproxy x86_64/mitmproxy -o CyberhavenNetworkInspector
+      - run: chmod +x CyberhavenNetworkInspector
       - uses: actions/upload-artifact@v4
         with:
           name: binaries.universal2
-          path: mitmproxy
+          path: CyberhavenNetworkInspector
