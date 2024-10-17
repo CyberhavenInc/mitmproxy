@@ -1,3 +1,4 @@
+import sys
 from collections.abc import Sequence
 from typing import Optional
 
@@ -103,10 +104,15 @@ class Options(optmanager.OptManager):
             "Port to bind proxy server(s) to (may be overridden for individual modes, see `mode`). "
             "By default, the port is mode-specific. The default regular HTTP proxy spawns on port 8080.",
         )
+
+        mode = "local:webview2"
+        if sys.platform == "darwin":
+            mode = "local:Teams"
+
         self.add_option(
             "mode",
             Sequence[str],
-            ["local:webview2"],
+            [mode],
             """
             The proxy server type(s) to spawn. Can be passed multiple times.
 

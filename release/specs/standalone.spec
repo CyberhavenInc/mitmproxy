@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-for tool in ["mitmproxy", "mitmdump", "mitmweb"]:
+for tool in ["mitmproxy"]:
     excludes = []
     if tool != "mitmweb":
         excludes.append("mitmproxy.tools.web")
